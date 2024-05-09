@@ -9,7 +9,7 @@ tests/assets/test.hdf5
 tests/assets/test_v141.hdf5
 
 tests/tmp_model_dir/
-skill_vae_trained_models/
+skill_vae_trained_models/*
 # pycharm configs
 .idea/
 
