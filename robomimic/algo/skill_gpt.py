@@ -41,8 +41,13 @@ class Skill_GPT(PolicyAlgo):
         Creates optimizers using @self.optim_params and places them into @self.optimizers.
         """
         def get_optimizer(net, net_optim_params):
+            parameters_with_decay = [p for p in net.parameters() if not isinstance(p, nn.Embedding)]
+            parameters_wo_decay = [p for p in net.parameters() if isinstance(p, nn.Embedding)]
             return optim.AdamW(
-                params=net.parameters(),
+                [
+                {"params": parameters_with_decay},
+                {"params": parameters_wo_decay, "weight_decay":0.0}
+                ],
                 lr=net_optim_params["learning_rate"],
                 betas=net_optim_params["betas"],
                 weight_decay=net_optim_params["weight_decay"],

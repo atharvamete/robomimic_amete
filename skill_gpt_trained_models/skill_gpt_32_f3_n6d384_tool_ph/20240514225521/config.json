@@ -1,7 +1,7 @@
 {
     "algo_name": "skill_gpt",
     "experiment": {
-        "name": "skill_gpt_32_f3_n6d384_tool_ph_mpc4",
+        "name": "skill_gpt_32_f3_n6d384_tool_ph",
         "validate": false,
         "logging": {
             "terminal_output_to_txt": true,
@@ -36,7 +36,7 @@
         }
     },
     "train": {
-        "data": null,
+        "data": "datasets/tool_hang/ph/low_dim_v141.hdf5",
         "output_dir": "../skill_gpt_trained_models",
         "num_data_workers": 0,
         "hdf5_cache_mode": "all",
@@ -73,7 +73,7 @@
             }
         },
         "offset_loss_scale": 0.0,
-        "mpc_horizon": 4,
+        "mpc_horizon": 16,
         "skill_gpt": {
             "start_token": 240,
             "vocab_size": 240,

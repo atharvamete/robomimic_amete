@@ -1,12 +1,12 @@
 {
     "algo_name": "skill_vae",
     "experiment": {
-        "name": "skill_vae_32_f4_k3s4_can_mh",
+        "name": "skill_vae_32_f4_k3s4",
         "validate": false,
         "logging": {
             "terminal_output_to_txt": true,
             "log_tb": false,
-            "log_wandb": true,
+            "log_wandb": false,
             "wandb_proj_name": "lvm_skill"
         },
         "save": {
