@@ -1,0 +1,482 @@
+
+============= Initialized Observation Utils with Obs Spec =============
+
+using obs modality: low_dim with keys: ['object', 'robot0_eef_quat', 'robot0_gripper_qpos', 'robot0_eef_pos']
+using obs modality: rgb with keys: []
+using obs modality: depth with keys: []
+using obs modality: scan with keys: []
+
+============= Loaded Environment Metadata =============
+obs key object with shape (10,)
+obs key robot0_eef_pos with shape (3,)
+obs key robot0_eef_quat with shape (4,)
+obs key robot0_gripper_qpos with shape (2,)
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Created environment with name Lift
+Action size is 7
+Lift
+{
+    "camera_depths": false,
+    "camera_heights": 84,
+    "camera_widths": 84,
+    "control_freq": 20,
+    "controller_configs": {
+        "control_delta": true,
+        "damping": 1,
+        "damping_limits": [
+            0,
+            10
+        ],
+        "impedance_mode": "fixed",
+        "input_max": 1,
+        "input_min": -1,
+        "interpolation": null,
+        "kp": 150,
+        "kp_limits": [
+            0,
+            300
+        ],
+        "orientation_limits": null,
+        "output_max": [
+            0.05,
+            0.05,
+            0.05,
+            0.5,
+            0.5,
+            0.5
+        ],
+        "output_min": [
+            -0.05,
+            -0.05,
+            -0.05,
+            -0.5,
+            -0.5,
+            -0.5
+        ],
+        "position_limits": null,
+        "ramp_ratio": 0.2,
+        "type": "OSC_POSE",
+        "uncouple_pos_ori": true
+    },
+    "has_offscreen_renderer": false,
+    "has_renderer": false,
+    "ignore_done": true,
+    "reward_shaping": false,
+    "robots": [
+        "Panda"
+    ],
+    "use_camera_obs": false,
+    "use_object_obs": true
+}
+
+wandb: Currently logged in as: a-mete-2416. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.17.0
+wandb: Run data is saved locally in /satassdscratch/amete7/robomimic_amete/robomimic/../skill_gpt_trained_models/skill_gpt_32_f3_n6d384_lift_ph/20240514234131/logs/wandb/run-20240514_234135-4uzlqot4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run skill_gpt_32_f3_n6d384_lift_ph
+wandb:  View project at https://wandb.ai/a-mete-2416/lvm_skill
+wandb:  View run at https://wandb.ai/a-mete-2416/lvm_skill/runs/4uzlqot4
+/home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/torch/nn/modules/transformer.py:286: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(f"enable_nested_tensor is True, but self.use_nested_tensor is False because {why_not_sparsity_fast_path}")
+
+============= Model Summary =============
+Skill_GPT (
+  ModuleDict(
+    (vae): SkillVAE(
+      (vq): FSQ(
+        (project_in): Linear(in_features=256, out_features=3, bias=True)
+        (project_out): Linear(in_features=3, out_features=256, bias=True)
+      )
+      (action_proj): Linear(in_features=7, out_features=256, bias=True)
+      (action_head): Linear(in_features=256, out_features=7, bias=True)
+      (conv_block): ResidualTemporalBlock(
+        (blocks): ModuleList(
+          (0): Conv1dBlock(
+            (block): Sequential(
+              (0): CausalConv1d(
+                (conv): Conv1d(256, 256, kernel_size=(5,), stride=(2,), padding=(4,))
+              )
+              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
+              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
+              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
+              (4): Mish()
+            )
+          )
+          (1): Conv1dBlock(
+            (block): Sequential(
+              (0): CausalConv1d(
+                (conv): Conv1d(256, 256, kernel_size=(3,), stride=(2,), padding=(2,))
+              )
+              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
+              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
+              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
+              (4): Mish()
+            )
+          )
+          (2): Conv1dBlock(
+            (block): Sequential(
+              (0): CausalConv1d(
+                (conv): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(2,))
+              )
+              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
+              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
+              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
+              (4): Mish()
+            )
+          )
+        )
+      )
+      (encoder): TransformerEncoder(
+        (layers): ModuleList(
+          (0-1): 2 x TransformerEncoderLayer(
+            (self_attn): MultiheadAttention(
+              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
+            )
+            (linear1): Linear(in_features=256, out_features=1024, bias=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+            (linear2): Linear(in_features=1024, out_features=256, bias=True)
+            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+            (dropout1): Dropout(p=0.1, inplace=False)
+            (dropout2): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+      (decoder): TransformerDecoder(
+        (layers): ModuleList(
+          (0-3): 4 x TransformerDecoderLayer(
+            (self_attn): MultiheadAttention(
+              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
+            )
+            (multihead_attn): MultiheadAttention(
+              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
+            )
+            (linear1): Linear(in_features=256, out_features=1024, bias=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+            (linear2): Linear(in_features=1024, out_features=256, bias=True)
+            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+            (norm3): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+            (dropout1): Dropout(p=0.1, inplace=False)
+            (dropout2): Dropout(p=0.1, inplace=False)
+            (dropout3): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+      (add_positional_emb): Summer(
+        (penc): PositionalEncoding1D()
+      )
+      (fixed_positional_emb): PositionalEncoding1D()
+    )
+    (gpt): SkillGPT(
+      (tok_emb): Embedding(241, 384)
+      (add_positional_emb): Summer(
+        (penc): PositionalEncoding1D()
+      )
+      (decoder): TransformerEncoder(
+        (layers): ModuleList(
+          (0-5): 6 x TransformerEncoderLayer(
+            (self_attn): MultiheadAttention(
+              (out_proj): NonDynamicallyQuantizableLinear(in_features=384, out_features=384, bias=True)
+            )
+            (linear1): Linear(in_features=384, out_features=1536, bias=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+            (linear2): Linear(in_features=1536, out_features=384, bias=True)
+            (norm1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (norm2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+            (dropout1): Dropout(p=0.1, inplace=False)
+            (dropout2): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+      (head): Linear(in_features=384, out_features=240, bias=True)
+      (drop): Dropout(p=0.1, inplace=False)
+      (lnf): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (obs_encoder): ObsEncoder(
+        (encoders): ModuleList(
+          (0): MLP_Proj(
+            (projection): Sequential(
+              (0): Linear(in_features=10, out_features=128, bias=True)
+              (1): ReLU(inplace=True)
+              (2): Dropout(p=0.1, inplace=False)
+              (3): Linear(in_features=128, out_features=128, bias=True)
+            )
+          )
+          (1): MLP_Proj(
+            (projection): Sequential(
+              (0): Linear(in_features=3, out_features=32, bias=True)
+            )
+          )
+          (2): MLP_Proj(
+            (projection): Sequential(
+              (0): Linear(in_features=4, out_features=32, bias=True)
+            )
+          )
+          (3): MLP_Proj(
+            (projection): Sequential(
+              (0): Linear(in_features=2, out_features=32, bias=True)
+            )
+          )
+          (4): MLP_Proj(
+            (projection): Sequential(
+              (0): Linear(in_features=224, out_features=384, bias=True)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+SequenceDataset: loading dataset into memory...
+  0%|          | 0/200 [00:00<?, ?it/s] 44%|####3     | 87/200 [00:00<00:00, 868.56it/s] 87%|########7 | 174/200 [00:00<00:00, 840.75it/s]100%|##########| 200/200 [00:00<00:00, 844.29it/s]
+SequenceDataset: caching get_item calls...
+  0%|          | 0/9666 [00:00<?, ?it/s] 14%|#4        | 1380/9666 [00:00<00:00, 13796.59it/s] 29%|##8       | 2760/9666 [00:00<00:00, 13651.30it/s] 43%|####2     | 4126/9666 [00:00<00:00, 13320.69it/s] 56%|#####6    | 5459/9666 [00:00<00:00, 12599.62it/s] 71%|#######   | 6862/9666 [00:00<00:00, 13090.36it/s] 85%|########5 | 8219/9666 [00:00<00:00, 13245.55it/s] 99%|#########8| 9554/9666 [00:00<00:00, 13276.45it/s]100%|##########| 9666/9666 [00:00<00:00, 13208.93it/s]
+
+============= Training Dataset =============
+SequenceDataset (
+	path=datasets/lift/ph/low_dim_v141.hdf5
+	obs_keys=('object', 'robot0_eef_pos', 'robot0_eef_quat', 'robot0_gripper_qpos')
+	seq_length=32
+	filter_key=none
+	frame_stack=1
+	pad_seq_length=True
+	pad_frame_stack=True
+	goal_mode=none
+	cache_mode=all
+	num_demos=200
+	num_sequences=9666
+)
+
+**************************************************
+Warnings generated by robomimic have been duplicated here (from above) for convenience. Please check them carefully.
+**************************************************
+
+  0%|          | 0/37 [00:00<?, ?it/s]  3%|2         | 1/37 [00:02<01:44,  2.92s/it]  8%|8         | 3/37 [00:03<00:27,  1.23it/s] 14%|#3        | 5/37 [00:03<00:13,  2.31it/s] 19%|#8        | 7/37 [00:03<00:08,  3.57it/s] 24%|##4       | 9/37 [00:03<00:05,  4.97it/s] 30%|##9       | 11/37 [00:03<00:04,  6.42it/s] 35%|###5      | 13/37 [00:03<00:03,  7.92it/s] 41%|####      | 15/37 [00:03<00:02,  9.31it/s] 46%|####5     | 17/37 [00:04<00:01, 10.44it/s] 51%|#####1    | 19/37 [00:04<00:01, 11.48it/s] 57%|#####6    | 21/37 [00:04<00:01, 12.31it/s] 62%|######2   | 23/37 [00:04<00:01, 12.91it/s] 68%|######7   | 25/37 [00:04<00:00, 13.44it/s] 73%|#######2  | 27/37 [00:04<00:00, 13.65it/s] 78%|#######8  | 29/37 [00:04<00:00, 13.82it/s] 84%|########3 | 31/37 [00:05<00:00, 13.95it/s] 89%|########9 | 33/37 [00:05<00:00, 14.06it/s] 95%|#########4| 35/37 [00:05<00:00, 14.23it/s]100%|##########| 37/37 [00:05<00:00, 14.50it/s]100%|##########| 37/37 [00:05<00:00,  6.81it/s]
+Train Epoch 1
+{
+    "Time_Data_Loading": 0.0043469468752543134,
+    "Time_Epoch": 0.0906054655710856,
+    "Time_Log_Info": 3.3179918924967447e-06,
+    "Time_Process_Batch": 0.0002661466598510742,
+    "Time_Train_Batch": 0.0857654849688212,
+    "grad_norms": 1.0124567098988304,
+    "offset_loss": 0.2183808535337448,
+    "prior_loss": 4.618747994706437
+}
+
+Epoch 1 Memory Usage: 5077 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.86it/s] 11%|#         | 4/37 [00:00<00:02, 14.96it/s] 16%|#6        | 6/37 [00:00<00:02, 14.83it/s] 22%|##1       | 8/37 [00:00<00:01, 14.70it/s] 27%|##7       | 10/37 [00:00<00:01, 14.77it/s] 32%|###2      | 12/37 [00:00<00:01, 14.64it/s] 38%|###7      | 14/37 [00:00<00:01, 14.54it/s] 43%|####3     | 16/37 [00:01<00:01, 14.65it/s] 49%|####8     | 18/37 [00:01<00:01, 14.68it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.81it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.84it/s] 65%|######4   | 24/37 [00:01<00:00, 14.56it/s] 70%|#######   | 26/37 [00:01<00:00, 14.60it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.75it/s] 81%|########1 | 30/37 [00:02<00:00, 14.71it/s] 86%|########6 | 32/37 [00:02<00:00, 14.63it/s] 92%|#########1| 34/37 [00:02<00:00, 14.60it/s] 97%|#########7| 36/37 [00:02<00:00, 14.69it/s]100%|##########| 37/37 [00:02<00:00, 14.69it/s]
+Train Epoch 2
+{
+    "Time_Data_Loading": 0.0038648327191670735,
+    "Time_Epoch": 0.04203209082285563,
+    "Time_Log_Info": 2.9166539510091144e-06,
+    "Time_Process_Batch": 0.0002536932627360026,
+    "Time_Train_Batch": 0.03770315647125244,
+    "grad_norms": 0.5473116900138691,
+    "offset_loss": 0.1571041184502679,
+    "prior_loss": 3.6827991459820724
+}
+
+Epoch 2 Memory Usage: 5077 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.80it/s] 11%|#         | 4/37 [00:00<00:02, 14.66it/s] 16%|#6        | 6/37 [00:00<00:02, 14.89it/s] 22%|##1       | 8/37 [00:00<00:01, 14.92it/s] 27%|##7       | 10/37 [00:00<00:01, 14.85it/s] 32%|###2      | 12/37 [00:00<00:01, 14.94it/s] 38%|###7      | 14/37 [00:00<00:01, 14.90it/s] 43%|####3     | 16/37 [00:01<00:01, 14.65it/s] 49%|####8     | 18/37 [00:01<00:01, 14.67it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.65it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.83it/s] 65%|######4   | 24/37 [00:01<00:00, 14.86it/s] 70%|#######   | 26/37 [00:01<00:00, 14.65it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.58it/s] 81%|########1 | 30/37 [00:02<00:00, 14.41it/s] 86%|########6 | 32/37 [00:02<00:00, 14.53it/s] 92%|#########1| 34/37 [00:02<00:00, 14.60it/s] 97%|#########7| 36/37 [00:02<00:00, 14.62it/s]100%|##########| 37/37 [00:02<00:00, 14.70it/s]
+Train Epoch 3
+{
+    "Time_Data_Loading": 0.0037777105967203776,
+    "Time_Epoch": 0.04199710289637248,
+    "Time_Log_Info": 2.964337666829427e-06,
+    "Time_Process_Batch": 0.0002512931823730469,
+    "Time_Train_Batch": 0.03777083158493042,
+    "grad_norms": 0.46536432375050313,
+    "offset_loss": 0.12907293519458254,
+    "prior_loss": 3.257420688062101
+}
+
+Epoch 3 Memory Usage: 5077 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.95it/s] 11%|#         | 4/37 [00:00<00:02, 14.68it/s] 16%|#6        | 6/37 [00:00<00:02, 14.71it/s] 22%|##1       | 8/37 [00:00<00:01, 14.73it/s] 27%|##7       | 10/37 [00:00<00:01, 14.79it/s] 32%|###2      | 12/37 [00:00<00:01, 14.79it/s] 38%|###7      | 14/37 [00:00<00:01, 14.75it/s] 43%|####3     | 16/37 [00:01<00:01, 14.54it/s] 49%|####8     | 18/37 [00:01<00:01, 14.64it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.73it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.79it/s] 65%|######4   | 24/37 [00:01<00:00, 14.68it/s] 70%|#######   | 26/37 [00:01<00:00, 14.61it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.65it/s] 81%|########1 | 30/37 [00:02<00:00, 14.59it/s] 86%|########6 | 32/37 [00:02<00:00, 14.64it/s] 92%|#########1| 34/37 [00:02<00:00, 14.52it/s] 97%|#########7| 36/37 [00:02<00:00, 14.51it/s]100%|##########| 37/37 [00:02<00:00, 14.65it/s]
+Train Epoch 4
+{
+    "Time_Data_Loading": 0.0038291573524475097,
+    "Time_Epoch": 0.04212277332941691,
+    "Time_Log_Info": 3.1232833862304687e-06,
+    "Time_Process_Batch": 0.00025504430135091146,
+    "Time_Train_Batch": 0.03783466418584188,
+    "grad_norms": 1.0157313926527591,
+    "offset_loss": 0.1130893004907144,
+    "prior_loss": 3.0240692125784383
+}
+
+Epoch 4 Memory Usage: 5077 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.82it/s] 11%|#         | 4/37 [00:00<00:02, 14.96it/s] 16%|#6        | 6/37 [00:00<00:02, 14.93it/s] 22%|##1       | 8/37 [00:00<00:01, 14.81it/s] 27%|##7       | 10/37 [00:00<00:01, 14.62it/s] 32%|###2      | 12/37 [00:00<00:01, 14.70it/s] 38%|###7      | 14/37 [00:00<00:01, 14.71it/s] 43%|####3     | 16/37 [00:01<00:01, 14.64it/s] 49%|####8     | 18/37 [00:01<00:01, 14.64it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.61it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.57it/s] 65%|######4   | 24/37 [00:01<00:00, 14.46it/s] 70%|#######   | 26/37 [00:01<00:00, 14.55it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.60it/s] 81%|########1 | 30/37 [00:02<00:00, 14.59it/s] 86%|########6 | 32/37 [00:02<00:00, 14.72it/s] 92%|#########1| 34/37 [00:02<00:00, 14.79it/s] 97%|#########7| 36/37 [00:02<00:00, 14.77it/s]100%|##########| 37/37 [00:02<00:00, 14.68it/s]
+Train Epoch 5
+{
+    "Time_Data_Loading": 0.003707730770111084,
+    "Time_Epoch": 0.04205745855967204,
+    "Time_Log_Info": 3.055731455485026e-06,
+    "Time_Process_Batch": 0.0002495606740315755,
+    "Time_Train_Batch": 0.03788566589355469,
+    "grad_norms": 1.6646573495039072,
+    "offset_loss": 0.10106100444052671,
+    "prior_loss": 2.843264682872875
+}
+save checkpoint to /satassdscratch/amete7/robomimic_amete/robomimic/../skill_gpt_trained_models/skill_gpt_32_f3_n6d384_lift_ph/20240514234131/models/model_epoch_5.pth
+
+Epoch 5 Memory Usage: 5079 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.78it/s] 11%|#         | 4/37 [00:00<00:02, 14.92it/s] 16%|#6        | 6/37 [00:00<00:02, 14.73it/s] 22%|##1       | 8/37 [00:00<00:01, 14.64it/s] 27%|##7       | 10/37 [00:00<00:01, 14.62it/s] 32%|###2      | 12/37 [00:00<00:01, 14.53it/s] 38%|###7      | 14/37 [00:00<00:01, 14.59it/s] 43%|####3     | 16/37 [00:01<00:01, 14.61it/s] 49%|####8     | 18/37 [00:01<00:01, 14.62it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.73it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.75it/s] 65%|######4   | 24/37 [00:01<00:00, 14.66it/s] 70%|#######   | 26/37 [00:01<00:00, 14.68it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.68it/s] 81%|########1 | 30/37 [00:02<00:00, 14.66it/s] 86%|########6 | 32/37 [00:02<00:00, 14.60it/s] 92%|#########1| 34/37 [00:02<00:00, 14.54it/s] 97%|#########7| 36/37 [00:02<00:00, 14.45it/s]100%|##########| 37/37 [00:02<00:00, 14.62it/s]
+Train Epoch 6
+{
+    "Time_Data_Loading": 0.004103398323059082,
+    "Time_Epoch": 0.04222523371378581,
+    "Time_Log_Info": 3.055731455485026e-06,
+    "Time_Process_Batch": 0.00024996201197306317,
+    "Time_Train_Batch": 0.037664775053660074,
+    "grad_norms": 1.6392678108357257,
+    "offset_loss": 0.09314786038688712,
+    "prior_loss": 2.7134096042529956
+}
+
+Epoch 6 Memory Usage: 5079 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.44it/s] 11%|#         | 4/37 [00:00<00:02, 14.39it/s] 16%|#6        | 6/37 [00:00<00:02, 14.47it/s] 22%|##1       | 8/37 [00:00<00:02, 14.44it/s] 27%|##7       | 10/37 [00:00<00:01, 14.34it/s] 32%|###2      | 12/37 [00:00<00:01, 14.10it/s] 38%|###7      | 14/37 [00:00<00:01, 14.27it/s] 43%|####3     | 16/37 [00:01<00:01, 14.30it/s] 49%|####8     | 18/37 [00:01<00:01, 14.25it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.16it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.08it/s] 65%|######4   | 24/37 [00:01<00:00, 14.22it/s] 70%|#######   | 26/37 [00:01<00:00, 14.23it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.20it/s] 81%|########1 | 30/37 [00:02<00:00, 14.20it/s] 86%|########6 | 32/37 [00:02<00:00, 14.23it/s] 92%|#########1| 34/37 [00:02<00:00, 14.36it/s] 97%|#########7| 36/37 [00:02<00:00, 14.50it/s]100%|##########| 37/37 [00:02<00:00, 14.31it/s]
+Train Epoch 7
+{
+    "Time_Data_Loading": 0.004125237464904785,
+    "Time_Epoch": 0.04311831792195638,
+    "Time_Log_Info": 3.24249267578125e-06,
+    "Time_Process_Batch": 0.00026014248530069984,
+    "Time_Train_Batch": 0.03851111729939779,
+    "grad_norms": 1.6749363310717704,
+    "offset_loss": 0.08846010710742022,
+    "prior_loss": 2.6183012433954187
+}
+
+Epoch 7 Memory Usage: 5079 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.68it/s] 11%|#         | 4/37 [00:00<00:02, 14.59it/s] 16%|#6        | 6/37 [00:00<00:02, 14.53it/s] 22%|##1       | 8/37 [00:00<00:01, 14.60it/s] 27%|##7       | 10/37 [00:00<00:01, 14.63it/s] 32%|###2      | 12/37 [00:00<00:01, 14.66it/s] 38%|###7      | 14/37 [00:00<00:01, 14.69it/s] 43%|####3     | 16/37 [00:01<00:01, 14.74it/s] 49%|####8     | 18/37 [00:01<00:01, 14.56it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.59it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.63it/s] 65%|######4   | 24/37 [00:01<00:00, 14.63it/s] 70%|#######   | 26/37 [00:01<00:00, 14.69it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.67it/s] 81%|########1 | 30/37 [00:02<00:00, 14.71it/s] 86%|########6 | 32/37 [00:02<00:00, 14.59it/s] 92%|#########1| 34/37 [00:02<00:00, 14.58it/s] 97%|#########7| 36/37 [00:02<00:00, 14.62it/s]100%|##########| 37/37 [00:02<00:00, 14.62it/s]
+Train Epoch 8
+{
+    "Time_Data_Loading": 0.003826002279917399,
+    "Time_Epoch": 0.04221577644348144,
+    "Time_Log_Info": 2.964337666829427e-06,
+    "Time_Process_Batch": 0.00025342702865600587,
+    "Time_Train_Batch": 0.03792816400527954,
+    "grad_norms": 4.613811589073023,
+    "offset_loss": 0.08432663514001949,
+    "prior_loss": 2.5466704690778577
+}
+
+Epoch 8 Memory Usage: 5079 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.67it/s] 11%|#         | 4/37 [00:00<00:02, 14.41it/s] 16%|#6        | 6/37 [00:00<00:02, 14.47it/s] 22%|##1       | 8/37 [00:00<00:01, 14.55it/s] 27%|##7       | 10/37 [00:00<00:01, 14.50it/s] 32%|###2      | 12/37 [00:00<00:01, 14.44it/s] 38%|###7      | 14/37 [00:00<00:01, 14.50it/s] 43%|####3     | 16/37 [00:01<00:01, 14.55it/s] 49%|####8     | 18/37 [00:01<00:01, 14.63it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.43it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.44it/s] 65%|######4   | 24/37 [00:01<00:00, 14.37it/s] 70%|#######   | 26/37 [00:01<00:00, 14.33it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.38it/s] 81%|########1 | 30/37 [00:02<00:00, 14.53it/s] 86%|########6 | 32/37 [00:02<00:00, 14.41it/s] 92%|#########1| 34/37 [00:02<00:00, 14.44it/s] 97%|#########7| 36/37 [00:02<00:00, 14.66it/s]100%|##########| 37/37 [00:02<00:00, 14.51it/s]
+Train Epoch 9
+{
+    "Time_Data_Loading": 0.003909651438395182,
+    "Time_Epoch": 0.04253319501876831,
+    "Time_Log_Info": 3.3855438232421873e-06,
+    "Time_Process_Batch": 0.0002633849779764811,
+    "Time_Train_Batch": 0.038148677349090575,
+    "grad_norms": 3.600618839047444,
+    "offset_loss": 0.08095214213873889,
+    "prior_loss": 2.491079903937675
+}
+
+Epoch 9 Memory Usage: 5079 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 15.08it/s] 11%|#         | 4/37 [00:00<00:02, 14.90it/s] 16%|#6        | 6/37 [00:00<00:02, 14.87it/s] 22%|##1       | 8/37 [00:00<00:01, 14.78it/s] 27%|##7       | 10/37 [00:00<00:01, 14.85it/s] 32%|###2      | 12/37 [00:00<00:01, 14.72it/s] 38%|###7      | 14/37 [00:00<00:01, 14.80it/s] 43%|####3     | 16/37 [00:01<00:01, 14.78it/s] 49%|####8     | 18/37 [00:01<00:01, 14.64it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.67it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.76it/s] 65%|######4   | 24/37 [00:01<00:00, 14.77it/s] 70%|#######   | 26/37 [00:01<00:00, 14.69it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.69it/s] 81%|########1 | 30/37 [00:02<00:00, 14.80it/s] 86%|########6 | 32/37 [00:02<00:00, 14.63it/s] 92%|#########1| 34/37 [00:02<00:00, 14.65it/s] 97%|#########7| 36/37 [00:02<00:00, 14.52it/s]100%|##########| 37/37 [00:02<00:00, 14.68it/s]
+Train Epoch 10
+{
+    "Time_Data_Loading": 0.0037994861602783205,
+    "Time_Epoch": 0.04204083283742269,
+    "Time_Log_Info": 2.964337666829427e-06,
+    "Time_Process_Batch": 0.0002478718757629395,
+    "Time_Train_Batch": 0.0377922773361206,
+    "grad_norms": 5.2888260430108796,
+    "offset_loss": 0.07821959116168924,
+    "prior_loss": 2.438755550900021
+}
+save checkpoint to /satassdscratch/amete7/robomimic_amete/robomimic/../skill_gpt_trained_models/skill_gpt_32_f3_n6d384_lift_ph/20240514234131/models/model_epoch_10.pth
+
+Epoch 10 Memory Usage: 5080 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.26it/s] 11%|#         | 4/37 [00:00<00:02, 13.88it/s] 16%|#6        | 6/37 [00:00<00:02, 14.38it/s] 22%|##1       | 8/37 [00:00<00:01, 14.66it/s] 27%|##7       | 10/37 [00:00<00:01, 14.60it/s] 32%|###2      | 12/37 [00:00<00:01, 14.77it/s] 38%|###7      | 14/37 [00:00<00:01, 14.75it/s] 43%|####3     | 16/37 [00:01<00:01, 14.80it/s] 49%|####8     | 18/37 [00:01<00:01, 14.61it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.66it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.49it/s] 65%|######4   | 24/37 [00:01<00:00, 14.52it/s] 70%|#######   | 26/37 [00:01<00:00, 14.58it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.53it/s] 81%|########1 | 30/37 [00:02<00:00, 14.58it/s] 86%|########6 | 32/37 [00:02<00:00, 14.80it/s] 92%|#########1| 34/37 [00:02<00:00, 14.82it/s] 97%|#########7| 36/37 [00:02<00:00, 14.85it/s]100%|##########| 37/37 [00:02<00:00, 14.65it/s]
+Train Epoch 11
+{
+    "Time_Data_Loading": 0.003771960735321045,
+    "Time_Epoch": 0.042142852147420244,
+    "Time_Log_Info": 3.1034151713053387e-06,
+    "Time_Process_Batch": 0.00025052626927693684,
+    "Time_Train_Batch": 0.037914987405141196,
+    "grad_norms": 2.643866065169074,
+    "offset_loss": 0.07636655786552944,
+    "prior_loss": 2.3896553645262846
+}
+
+Epoch 11 Memory Usage: 5080 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.84it/s] 11%|#         | 4/37 [00:00<00:02, 14.86it/s] 16%|#6        | 6/37 [00:00<00:02, 14.62it/s] 22%|##1       | 8/37 [00:00<00:01, 14.52it/s] 27%|##7       | 10/37 [00:00<00:01, 14.66it/s] 32%|###2      | 12/37 [00:00<00:01, 14.72it/s] 38%|###7      | 14/37 [00:00<00:01, 14.76it/s] 43%|####3     | 16/37 [00:01<00:01, 14.71it/s] 49%|####8     | 18/37 [00:01<00:01, 14.79it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.80it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.69it/s] 65%|######4   | 24/37 [00:01<00:00, 14.67it/s] 70%|#######   | 26/37 [00:01<00:00, 14.69it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.69it/s] 81%|########1 | 30/37 [00:02<00:00, 14.62it/s] 86%|########6 | 32/37 [00:02<00:00, 14.40it/s] 92%|#########1| 34/37 [00:02<00:00, 14.43it/s] 97%|#########7| 36/37 [00:02<00:00, 14.39it/s]100%|##########| 37/37 [00:02<00:00, 14.59it/s]
+Train Epoch 12
+{
+    "Time_Data_Loading": 0.0038337469100952148,
+    "Time_Epoch": 0.04230657418568929,
+    "Time_Log_Info": 3.127257029215495e-06,
+    "Time_Process_Batch": 0.00025551716486612956,
+    "Time_Train_Batch": 0.03800993363062541,
+    "grad_norms": 7.53864798694409,
+    "offset_loss": 0.07429454958922155,
+    "prior_loss": 2.3605297256160425
+}
+
+Epoch 12 Memory Usage: 5080 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.70it/s] 11%|#         | 4/37 [00:00<00:02, 14.51it/s] 16%|#6        | 6/37 [00:00<00:02, 14.53it/s] 22%|##1       | 8/37 [00:00<00:01, 14.70it/s] 27%|##7       | 10/37 [00:00<00:01, 14.73it/s] 32%|###2      | 12/37 [00:00<00:01, 14.64it/s] 38%|###7      | 14/37 [00:00<00:01, 14.67it/s] 43%|####3     | 16/37 [00:01<00:01, 14.33it/s] 49%|####8     | 18/37 [00:01<00:01, 14.52it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.57it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.61it/s] 65%|######4   | 24/37 [00:01<00:00, 14.56it/s] 70%|#######   | 26/37 [00:01<00:00, 14.56it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.58it/s] 81%|########1 | 30/37 [00:02<00:00, 14.46it/s] 86%|########6 | 32/37 [00:02<00:00, 14.40it/s] 92%|#########1| 34/37 [00:02<00:00, 14.29it/s] 97%|#########7| 36/37 [00:02<00:00, 14.27it/s]100%|##########| 37/37 [00:02<00:00, 14.49it/s]
+Train Epoch 13
+{
+    "Time_Data_Loading": 0.0038661837577819826,
+    "Time_Epoch": 0.04261132876078288,
+    "Time_Log_Info": 3.2146771748860675e-06,
+    "Time_Process_Batch": 0.0002557476361592611,
+    "Time_Train_Batch": 0.03827501138051351,
+    "grad_norms": 8.835966986737878,
+    "offset_loss": 0.07359781720348306,
+    "prior_loss": 2.32904779588854
+}
+
+Epoch 13 Memory Usage: 5080 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.51it/s] 11%|#         | 4/37 [00:00<00:02, 14.52it/s] 16%|#6        | 6/37 [00:00<00:02, 14.62it/s] 22%|##1       | 8/37 [00:00<00:01, 14.65it/s] 27%|##7       | 10/37 [00:00<00:01, 14.70it/s] 32%|###2      | 12/37 [00:00<00:01, 14.61it/s] 38%|###7      | 14/37 [00:00<00:01, 14.51it/s] 43%|####3     | 16/37 [00:01<00:01, 14.52it/s] 49%|####8     | 18/37 [00:01<00:01, 14.55it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.46it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.36it/s] 65%|######4   | 24/37 [00:01<00:00, 14.35it/s] 70%|#######   | 26/37 [00:01<00:00, 14.48it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.55it/s] 81%|########1 | 30/37 [00:02<00:00, 14.65it/s] 86%|########6 | 32/37 [00:02<00:00, 14.46it/s] 92%|#########1| 34/37 [00:02<00:00, 14.53it/s] 97%|#########7| 36/37 [00:02<00:00, 14.71it/s]100%|##########| 37/37 [00:02<00:00, 14.57it/s]
+Train Epoch 14
+{
+    "Time_Data_Loading": 0.003971493244171143,
+    "Time_Epoch": 0.04236762523651123,
+    "Time_Log_Info": 2.9961268107096354e-06,
+    "Time_Process_Batch": 0.0002600590387980143,
+    "Time_Train_Batch": 0.037929964065551755,
+    "grad_norms": 11.026651180403308,
+    "offset_loss": 0.07195031985237792,
+    "prior_loss": 2.2985792933283626
+}
+
+Epoch 14 Memory Usage: 5080 MB
+
+  0%|          | 0/37 [00:00<?, ?it/s]  5%|5         | 2/37 [00:00<00:02, 14.82it/s] 11%|#         | 4/37 [00:00<00:02, 14.92it/s] 16%|#6        | 6/37 [00:00<00:02, 14.87it/s] 22%|##1       | 8/37 [00:00<00:01, 14.79it/s] 27%|##7       | 10/37 [00:00<00:01, 14.82it/s] 32%|###2      | 12/37 [00:00<00:01, 14.90it/s] 38%|###7      | 14/37 [00:00<00:01, 14.72it/s] 43%|####3     | 16/37 [00:01<00:01, 14.51it/s] 49%|####8     | 18/37 [00:01<00:01, 14.55it/s] 54%|#####4    | 20/37 [00:01<00:01, 14.61it/s] 59%|#####9    | 22/37 [00:01<00:01, 14.58it/s] 65%|######4   | 24/37 [00:01<00:00, 14.57it/s] 70%|#######   | 26/37 [00:01<00:00, 14.59it/s] 76%|#######5  | 28/37 [00:01<00:00, 14.60it/s] 81%|########1 | 30/37 [00:02<00:00, 14.65it/s] 86%|########6 | 32/37 [00:02<00:00, 14.64it/s] 92%|#########1| 34/37 [00:02<00:00, 14.84it/s] 97%|#########7| 36/37 [00:02<00:00, 14.79it/s]100%|##########| 37/37 [00:02<00:00, 14.68it/s]
+Train Epoch 15
+{
+    "Time_Data_Loading": 0.0037520805994669597,
+    "Time_Epoch": 0.04203572670618693,
+    "Time_Log_Info": 3.274281819661458e-06,
+    "Time_Process_Batch": 0.0002551515897115072,
+    "Time_Train_Batch": 0.03780840237935384,
+    "grad_norms": 5.643907396566622,
+    "offset_loss": 0.07078510985986607,
+    "prior_loss": 2.2726449128743766
+}
+rollout: env=Lift, horizon=400, use_goals=False, num_episodes=50
+  0%|          | 0/50 [00:00<?, ?it/s]  2%|2         | 1/50 [00:01<01:31,  1.87s/it]  4%|4         | 2/50 [00:11<05:16,  6.60s/it]  6%|6         | 3/50 [00:21<06:20,  8.10s/it]  8%|8         | 4/50 [00:31<06:45,  8.82s/it] 10%|#         | 5/50 [00:41<06:54,  9.21s/it] 12%|#2        | 6/50 [00:51<06:55,  9.45s/it] 14%|#4        | 7/50 [01:01<06:50,  9.55s/it] 16%|#6        | 8/50 [01:02<04:55,  7.04s/it] 18%|#8        | 9/50 [01:12<05:26,  7.96s/it] 20%|##        | 10/50 [01:22<05:41,  8.54s/it] 22%|##2       | 11/50 [01:32<05:50,  8.98s/it] 24%|##4       | 12/50 [01:42<05:52,  9.27s/it] 26%|##6       | 13/50 [01:52<05:49,  9.44s/it] 28%|##8       | 14/50 [02:02<05:45,  9.60s/it] 30%|###       | 15/50 [02:12<05:44,  9.84s/it] 32%|###2      | 16/50 [02:22<05:37,  9.91s/it] 34%|###4      | 17/50 [02:32<05:29,  9.97s/it] 36%|###6      | 18/50 [02:43<05:19, 10.00s/it] 38%|###8      | 19/50 [02:53<05:10, 10.01s/it] 40%|####      | 20/50 [03:03<05:01, 10.06s/it] 42%|####2     | 21/50 [03:13<04:53, 10.10s/it] 44%|####4     | 22/50 [03:21<04:22,  9.39s/it] 46%|####6     | 23/50 [03:31<04:22,  9.73s/it] 48%|####8     | 24/50 [03:42<04:19,  9.96s/it] 50%|#####     | 25/50 [03:52<04:14, 10.16s/it] 52%|#####2    | 26/50 [04:03<04:07, 10.30s/it] 54%|#####4    | 27/50 [04:13<03:57, 10.33s/it] 56%|#####6    | 28/50 [04:24<03:48, 10.39s/it] 58%|#####8    | 29/50 [04:34<03:38, 10.41s/it] 60%|######    | 30/50 [04:36<02:37,  7.87s/it] 62%|######2   | 31/50 [04:47<02:43,  8.59s/it] 64%|######4   | 32/50 [04:57<02:43,  9.10s/it] 66%|######6   | 33/50 [05:07<02:40,  9.44s/it] 68%|######8   | 34/50 [05:17<02:34,  9.68s/it]

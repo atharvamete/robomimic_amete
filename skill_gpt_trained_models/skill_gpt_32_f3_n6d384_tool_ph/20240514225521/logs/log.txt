@@ -1,257 +1,0 @@
-
-============= Initialized Observation Utils with Obs Spec =============
-
-using obs modality: low_dim with keys: ['robot0_eef_pos', 'robot0_gripper_qpos', 'robot0_eef_quat', 'object']
-using obs modality: rgb with keys: []
-using obs modality: depth with keys: []
-using obs modality: scan with keys: []
-
-============= Loaded Environment Metadata =============
-obs key object with shape (44,)
-obs key robot0_eef_pos with shape (3,)
-obs key robot0_eef_quat with shape (4,)
-obs key robot0_gripper_qpos with shape (2,)
-[robosuite WARNING] No private macro file found! (macros.py:53)
-[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
-[robosuite WARNING] To setup, run: python /home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
-Created environment with name ToolHang
-Action size is 7
-ToolHang
-{
-    "camera_depths": false,
-    "camera_heights": 84,
-    "camera_widths": 84,
-    "control_freq": 20,
-    "controller_configs": {
-        "control_delta": true,
-        "damping": 1,
-        "damping_limits": [
-            0,
-            10
-        ],
-        "impedance_mode": "fixed",
-        "input_max": 1,
-        "input_min": -1,
-        "interpolation": null,
-        "kp": 150,
-        "kp_limits": [
-            0,
-            300
-        ],
-        "orientation_limits": null,
-        "output_max": [
-            0.05,
-            0.05,
-            0.05,
-            0.5,
-            0.5,
-            0.5
-        ],
-        "output_min": [
-            -0.05,
-            -0.05,
-            -0.05,
-            -0.5,
-            -0.5,
-            -0.5
-        ],
-        "position_limits": null,
-        "ramp_ratio": 0.2,
-        "type": "OSC_POSE",
-        "uncouple_pos_ori": true
-    },
-    "has_offscreen_renderer": false,
-    "has_renderer": false,
-    "ignore_done": true,
-    "reward_shaping": false,
-    "robots": [
-        "Panda"
-    ],
-    "use_camera_obs": false,
-    "use_object_obs": true
-}
-
-wandb: Currently logged in as: a-mete-2416. Use `wandb login --relogin` to force relogin
-wandb: Tracking run with wandb version 0.17.0
-wandb: Run data is saved locally in /satassdscratch/amete7/robomimic_amete/robomimic/../skill_gpt_trained_models/skill_gpt_32_f3_n6d384_tool_ph/20240514225521/logs/wandb/run-20240514_225526-qtn15jxa
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run skill_gpt_32_f3_n6d384_tool_ph
-wandb:  View project at https://wandb.ai/a-mete-2416/lvm_skill
-wandb:  View run at https://wandb.ai/a-mete-2416/lvm_skill/runs/qtn15jxa
-/home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/torch/nn/modules/transformer.py:286: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
-  warnings.warn(f"enable_nested_tensor is True, but self.use_nested_tensor is False because {why_not_sparsity_fast_path}")
-
-============= Model Summary =============
-Skill_GPT (
-  ModuleDict(
-    (vae): SkillVAE(
-      (vq): FSQ(
-        (project_in): Linear(in_features=256, out_features=3, bias=True)
-        (project_out): Linear(in_features=3, out_features=256, bias=True)
-      )
-      (action_proj): Linear(in_features=7, out_features=256, bias=True)
-      (action_head): Linear(in_features=256, out_features=7, bias=True)
-      (conv_block): ResidualTemporalBlock(
-        (blocks): ModuleList(
-          (0): Conv1dBlock(
-            (block): Sequential(
-              (0): CausalConv1d(
-                (conv): Conv1d(256, 256, kernel_size=(5,), stride=(2,), padding=(4,))
-              )
-              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
-              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
-              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
-              (4): Mish()
-            )
-          )
-          (1): Conv1dBlock(
-            (block): Sequential(
-              (0): CausalConv1d(
-                (conv): Conv1d(256, 256, kernel_size=(3,), stride=(2,), padding=(2,))
-              )
-              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
-              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
-              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
-              (4): Mish()
-            )
-          )
-          (2): Conv1dBlock(
-            (block): Sequential(
-              (0): CausalConv1d(
-                (conv): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(2,))
-              )
-              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
-              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
-              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
-              (4): Mish()
-            )
-          )
-        )
-      )
-      (encoder): TransformerEncoder(
-        (layers): ModuleList(
-          (0-1): 2 x TransformerEncoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (linear1): Linear(in_features=256, out_features=1024, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=1024, out_features=256, bias=True)
-            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (decoder): TransformerDecoder(
-        (layers): ModuleList(
-          (0-3): 4 x TransformerDecoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (multihead_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (linear1): Linear(in_features=256, out_features=1024, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=1024, out_features=256, bias=True)
-            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm3): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-            (dropout3): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (add_positional_emb): Summer(
-        (penc): PositionalEncoding1D()
-      )
-      (fixed_positional_emb): PositionalEncoding1D()
-    )
-    (gpt): SkillGPT(
-      (tok_emb): Embedding(241, 384)
-      (add_positional_emb): Summer(
-        (penc): PositionalEncoding1D()
-      )
-      (decoder): TransformerEncoder(
-        (layers): ModuleList(
-          (0-5): 6 x TransformerEncoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=384, out_features=384, bias=True)
-            )
-            (linear1): Linear(in_features=384, out_features=1536, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=1536, out_features=384, bias=True)
-            (norm1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (head): Linear(in_features=384, out_features=240, bias=True)
-      (drop): Dropout(p=0.1, inplace=False)
-      (lnf): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
-      (obs_encoder): ObsEncoder(
-        (encoders): ModuleList(
-          (0): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=44, out_features=128, bias=True)
-              (1): ReLU(inplace=True)
-              (2): Dropout(p=0.1, inplace=False)
-              (3): Linear(in_features=128, out_features=128, bias=True)
-            )
-          )
-          (1): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=3, out_features=32, bias=True)
-            )
-          )
-          (2): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=4, out_features=32, bias=True)
-            )
-          )
-          (3): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=2, out_features=32, bias=True)
-            )
-          )
-          (4): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=224, out_features=384, bias=True)
-            )
-          )
-        )
-      )
-    )
-  )
-)
-
-SequenceDataset: loading dataset into memory...
-  0%|          | 0/200 [00:00<?, ?it/s] 33%|###3      | 66/200 [00:00<00:00, 652.02it/s] 66%|######6   | 132/200 [00:00<00:00, 649.35it/s] 98%|#########8| 197/200 [00:00<00:00, 632.05it/s]100%|##########| 200/200 [00:00<00:00, 634.97it/s]
-SequenceDataset: caching get_item calls...
-  0%|          | 0/95962 [00:00<?, ?it/s]  2%|1         | 1664/95962 [00:00<00:05, 16638.19it/s]  3%|3         | 3328/95962 [00:00<00:05, 15645.93it/s]  5%|5         | 4924/95962 [00:00<00:05, 15782.57it/s]  7%|6         | 6507/95962 [00:00<00:05, 15799.17it/s]  8%|8         | 8089/95962 [00:00<00:05, 15733.48it/s] 10%|#         | 9675/95962 [00:00<00:05, 15774.02it/s] 12%|#1        | 11254/95962 [00:00<00:05, 15731.80it/s] 13%|#3        | 12832/95962 [00:00<00:05, 15745.00it/s] 15%|#5        | 14407/95962 [00:00<00:05, 15722.76it/s] 17%|#6        | 15980/95962 [00:01<00:05, 15602.52it/s] 18%|#8        | 17546/95962 [00:01<00:05, 15619.60it/s] 20%|#9        | 19109/95962 [00:01<00:04, 15556.88it/s] 22%|##1       | 20665/95962 [00:01<00:08, 8927.16it/s]  23%|##3       | 22234/95962 [00:01<00:07, 10264.12it/s] 25%|##4       | 23797/95962 [00:01<00:06, 11445.33it/s] 26%|##6       | 25322/95962 [00:01<00:05, 12354.60it/s] 28%|##7       | 26758/95962 [00:01<00:05, 12824.33it/s] 29%|##9       | 28262/95962 [00:02<00:05, 13413.29it/s] 31%|###1      | 29776/95962 [00:02<00:04, 13887.24it/s] 33%|###2      | 31335/95962 [00:02<00:04, 14366.46it/s] 34%|###4      | 32879/95962 [00:02<00:04, 14674.24it/s] 36%|###5      | 34406/95962 [00:02<00:04, 14846.68it/s] 37%|###7      | 35976/95962 [00:02<00:03, 15096.06it/s] 39%|###9      | 37509/95962 [00:02<00:03, 15163.42it/s] 41%|####      | 39042/95962 [00:02<00:03, 15194.13it/s] 42%|####2     | 40573/95962 [00:02<00:03, 15164.47it/s] 44%|####3     | 42098/95962 [00:02<00:03, 15021.96it/s] 45%|####5     | 43634/95962 [00:03<00:03, 15119.26it/s] 47%|####7     | 45150/95962 [00:03<00:03, 15097.96it/s] 49%|####8     | 46684/95962 [00:03<00:03, 15168.94it/s] 50%|#####     | 48203/95962 [00:03<00:03, 15167.01it/s] 52%|#####1    | 49722/95962 [00:03<00:03, 15162.07it/s] 53%|#####3    | 51257/95962 [00:03<00:02, 15216.52it/s] 55%|#####5    | 52787/95962 [00:03<00:02, 15238.94it/s] 57%|#####6    | 54312/95962 [00:03<00:02, 15182.48it/s] 58%|#####8    | 55851/95962 [00:03<00:02, 15243.88it/s] 60%|#####9    | 57411/95962 [00:03<00:02, 15349.12it/s] 61%|######1   | 58947/95962 [00:04<00:02, 15280.00it/s] 63%|######3   | 60482/95962 [00:04<00:02, 15299.26it/s] 65%|######4   | 62013/95962 [00:04<00:02, 15262.88it/s] 66%|######6   | 63557/95962 [00:04<00:02, 15313.33it/s] 68%|######7   | 65089/95962 [00:04<00:02, 15221.88it/s] 69%|######9   | 66634/95962 [00:04<00:01, 15287.34it/s] 71%|#######1  | 68182/95962 [00:04<00:01, 15342.42it/s] 73%|#######2  | 69717/95962 [00:04<00:01, 15087.44it/s] 74%|#######4  | 71268/95962 [00:04<00:01, 15210.77it/s] 76%|#######5  | 72790/95962 [00:04<00:01, 15201.68it/s] 77%|#######7  | 74368/95962 [00:05<00:01, 15371.36it/s] 79%|#######9  | 75911/95962 [00:05<00:01, 15387.68it/s] 81%|########  | 77469/95962 [00:05<00:01, 15443.15it/s] 82%|########2 | 79015/95962 [00:05<00:01, 15447.61it/s] 84%|########3 | 80567/95962 [00:05<00:00, 15466.97it/s] 86%|########5 | 82114/95962 [00:05<00:00, 15389.11it/s] 87%|########7 | 83659/95962 [00:05<00:00, 15405.56it/s] 89%|########8 | 85200/95962 [00:05<00:00, 15312.58it/s] 90%|######### | 86747/95962 [00:05<00:00, 15357.44it/s] 92%|#########1| 88283/95962 [00:05<00:00, 15344.18it/s] 94%|#########3| 89818/95962 [00:06<00:00, 15327.47it/s] 95%|#########5| 91378/95962 [00:06<00:00, 15407.50it/s] 97%|#########6| 92919/95962 [00:06<00:00, 15363.58it/s] 98%|#########8| 94456/95962 [00:06<00:00, 15323.84it/s]100%|##########| 95962/95962 [00:06<00:00, 14786.30it/s]
-
-============= Training Dataset =============
-SequenceDataset (
-	path=datasets/tool_hang/ph/low_dim_v141.hdf5
-	obs_keys=('object', 'robot0_eef_pos', 'robot0_eef_quat', 'robot0_gripper_qpos')
-	seq_length=32
-	filter_key=none
-	frame_stack=1
-	pad_seq_length=True
-	pad_frame_stack=True
-	goal_mode=none
-	cache_mode=all
-	num_demos=200
-	num_sequences=95962
-)
-
-**************************************************
-Warnings generated by robomimic have been duplicated here (from above) for convenience. Please check them carefully.
-**************************************************
-
-  0%|          | 0/374 [00:00<?, ?it/s]  0%|          | 1/374 [00:03<19:52,  3.20s/it]  1%|          | 3/374 [00:03<05:30,  1.12it/s]  1%|1         | 5/374 [00:03<02:54,  2.11it/s]  2%|1         | 7/374 [00:03<01:51,  3.29it/s]  2%|2         | 9/374 [00:03<01:18,  4.64it/s]  3%|2         | 11/374 [00:03<00:59,  6.07it/s]  3%|3         | 13/374 [00:04<00:48,  7.45it/s]  4%|4         | 15/374 [00:04<00:41,  8.74it/s]  5%|4         | 17/374 [00:04<00:36,  9.84it/s]  5%|5         | 19/374 [00:04<00:33, 10.69it/s]  6%|5         | 21/374 [00:04<00:30, 11.44it/s]  6%|6         | 23/374 [00:04<00:29, 12.08it/s]  7%|6         | 25/374 [00:04<00:27, 12.49it/s]  7%|7         | 27/374 [00:05<00:26, 12.88it/s]  8%|7         | 29/374 [00:05<00:26, 13.23it/s]  8%|8         | 31/374 [00:05<00:25, 13.39it/s]  9%|8         | 33/374 [00:05<00:25, 13.40it/s]  9%|9         | 35/374 [00:05<00:24, 13.61it/s] 10%|9         | 37/374 [00:05<00:25, 13.37it/s] 10%|#         | 39/374 [00:06<00:24, 13.54it/s] 11%|#         | 41/374 [00:06<00:24, 13.70it/s] 11%|#1        | 43/374 [00:06<00:23, 13.83it/s] 12%|#2        | 45/374 [00:06<00:23, 13.90it/s] 13%|#2        | 47/374 [00:06<00:23, 13.91it/s] 13%|#3        | 49/374 [00:06<00:23, 13.87it/s] 14%|#3        | 51/374 [00:06<00:23, 13.87it/s] 14%|#4        | 53/374 [00:07<00:23, 13.95it/s] 15%|#4        | 55/374 [00:07<00:22, 14.02it/s] 15%|#5        | 57/374 [00:07<00:22, 14.06it/s] 16%|#5        | 59/374 [00:07<00:22, 14.06it/s] 16%|#6        | 61/374 [00:07<00:22, 14.12it/s] 17%|#6        | 63/374 [00:07<00:21, 14.16it/s] 17%|#7        | 65/374 [00:07<00:21, 14.17it/s] 18%|#7        | 67/374 [00:07<00:21, 14.10it/s] 18%|#8        | 69/374 [00:08<00:21, 14.09it/s] 19%|#8        | 71/374 [00:08<00:21, 14.10it/s] 20%|#9        | 73/374 [00:08<00:21, 14.03it/s] 20%|##        | 75/374 [00:08<00:21, 13.73it/s] 21%|##        | 77/374 [00:08<00:21, 13.69it/s] 21%|##1       | 79/374 [00:08<00:21, 13.84it/s] 22%|##1       | 81/374 [00:09<00:21, 13.92it/s] 22%|##2       | 83/374 [00:09<00:20, 14.00it/s] 23%|##2       | 85/374 [00:09<00:20, 14.07it/s] 23%|##3       | 87/374 [00:09<00:20, 13.98it/s] 24%|##3       | 89/374 [00:09<00:20, 13.94it/s] 24%|##4       | 91/374 [00:09<00:20, 13.99it/s] 25%|##4       | 93/374 [00:09<00:21, 13.33it/s] 25%|##5       | 95/374 [00:10<00:20, 13.38it/s] 26%|##5       | 97/374 [00:10<00:20, 13.44it/s] 26%|##6       | 99/374 [00:10<00:20, 13.50it/s] 27%|##7       | 101/374 [00:10<00:20, 13.47it/s] 28%|##7       | 103/374 [00:10<00:19, 13.55it/s] 28%|##8       | 105/374 [00:10<00:19, 13.51it/s] 29%|##8       | 107/374 [00:10<00:19, 13.44it/s] 29%|##9       | 109/374 [00:11<00:19, 13.53it/s] 30%|##9       | 111/374 [00:11<00:19, 13.69it/s] 30%|###       | 113/374 [00:11<00:19, 13.68it/s] 31%|###       | 115/374 [00:11<00:19, 13.58it/s] 31%|###1      | 117/374 [00:11<00:18, 13.55it/s] 32%|###1      | 119/374 [00:11<00:18, 13.43it/s] 32%|###2      | 121/374 [00:11<00:18, 13.60it/s] 33%|###2      | 123/374 [00:12<00:18, 13.64it/s] 33%|###3      | 125/374 [00:12<00:18, 13.66it/s] 34%|###3      | 127/374 [00:12<00:17, 13.76it/s] 34%|###4      | 129/374 [00:12<00:17, 13.63it/s] 35%|###5      | 131/374 [00:12<00:18, 13.50it/s] 36%|###5      | 133/374 [00:12<00:17, 13.63it/s] 36%|###6      | 135/374 [00:12<00:17, 13.79it/s] 37%|###6      | 137/374 [00:13<00:17, 13.69it/s] 37%|###7      | 139/374 [00:13<00:17, 13.76it/s] 38%|###7      | 141/374 [00:13<00:16, 13.87it/s] 38%|###8      | 143/374 [00:13<00:16, 13.80it/s] 39%|###8      | 145/374 [00:13<00:16, 13.67it/s] 39%|###9      | 147/374 [00:13<00:16, 13.70it/s] 40%|###9      | 149/374 [00:13<00:16, 13.77it/s] 40%|####      | 151/374 [00:14<00:16, 13.75it/s] 41%|####      | 153/374 [00:14<00:16, 13.73it/s] 41%|####1     | 155/374 [00:14<00:15, 13.80it/s] 42%|####1     | 157/374 [00:14<00:15, 13.80it/s] 43%|####2     | 159/374 [00:14<00:15, 13.84it/s] 43%|####3     | 161/374 [00:14<00:15, 13.97it/s] 44%|####3     | 163/374 [00:14<00:15, 14.01it/s] 44%|####4     | 165/374 [00:15<00:14, 14.04it/s] 45%|####4     | 167/374 [00:15<00:14, 14.05it/s] 45%|####5     | 169/374 [00:15<00:14, 14.09it/s] 46%|####5     | 171/374 [00:15<00:14, 14.13it/s] 46%|####6     | 173/374 [00:15<00:14, 14.15it/s] 47%|####6     | 175/374 [00:15<00:14, 14.16it/s] 47%|####7     | 177/374 [00:15<00:14, 14.03it/s] 48%|####7     | 179/374 [00:16<00:13, 13.95it/s] 48%|####8     | 181/374 [00:16<00:15, 12.84it/s] 49%|####8     | 183/374 [00:16<00:15, 12.56it/s] 49%|####9     | 185/374 [00:16<00:14, 12.94it/s] 50%|#####     | 187/374 [00:16<00:14, 13.13it/s] 51%|#####     | 189/374 [00:16<00:13, 13.30it/s] 51%|#####1    | 191/374 [00:17<00:13, 13.49it/s] 52%|#####1    | 193/374 [00:17<00:13, 13.72it/s] 52%|#####2    | 195/374 [00:17<00:13, 13.76it/s] 53%|#####2    | 197/374 [00:17<00:12, 13.90it/s] 53%|#####3    | 199/374 [00:17<00:12, 13.74it/s] 54%|#####3    | 201/374 [00:17<00:12, 13.89it/s] 54%|#####4    | 203/374 [00:17<00:12, 13.99it/s] 55%|#####4    | 205/374 [00:18<00:12, 13.94it/s] 55%|#####5    | 207/374 [00:18<00:11, 13.93it/s] 56%|#####5    | 209/374 [00:18<00:11, 13.96it/s] 56%|#####6    | 211/374 [00:18<00:11, 13.94it/s] 57%|#####6    | 213/374 [00:18<00:11, 14.01it/s] 57%|#####7    | 215/374 [00:18<00:11, 13.96it/s] 58%|#####8    | 217/374 [00:18<00:11, 13.80it/s] 59%|#####8    | 219/374 [00:19<00:11, 13.89it/s] 59%|#####9    | 221/374 [00:19<00:11, 13.82it/s] 60%|#####9    | 223/374 [00:19<00:10, 13.85it/s] 60%|######    | 225/374 [00:19<00:10, 13.87it/s] 61%|######    | 227/374 [00:19<00:10, 13.85it/s] 61%|######1   | 229/374 [00:19<00:10, 13.84it/s] 62%|######1   | 231/374 [00:19<00:10, 13.95it/s] 62%|######2   | 233/374 [00:20<00:10, 13.92it/s] 63%|######2   | 235/374 [00:20<00:10, 13.88it/s] 63%|######3   | 237/374 [00:20<00:09, 13.86it/s] 64%|######3   | 239/374 [00:20<00:09, 13.93it/s] 64%|######4   | 241/374 [00:20<00:09, 14.05it/s] 65%|######4   | 243/374 [00:20<00:09, 14.07it/s] 66%|######5   | 245/374 [00:20<00:09, 14.05it/s] 66%|######6   | 247/374 [00:21<00:09, 13.93it/s] 67%|######6   | 249/374 [00:21<00:09, 13.77it/s] 67%|######7   | 251/374 [00:21<00:08, 13.76it/s] 68%|######7   | 253/374 [00:21<00:08, 13.85it/s] 68%|######8   | 255/374 [00:21<00:08, 13.95it/s] 69%|######8   | 257/374 [00:21<00:08, 13.94it/s] 69%|######9   | 259/374 [00:21<00:08, 14.05it/s] 70%|######9   | 261/374 [00:22<00:08, 14.06it/s] 70%|#######   | 263/374 [00:22<00:07, 14.12it/s] 71%|#######   | 265/374 [00:22<00:07, 14.09it/s] 71%|#######1  | 267/374 [00:22<00:07, 13.86it/s] 72%|#######1  | 269/374 [00:22<00:07, 13.96it/s] 72%|#######2  | 271/374 [00:22<00:07, 13.99it/s] 73%|#######2  | 273/374 [00:22<00:07, 14.06it/s] 74%|#######3  | 275/374 [00:23<00:07, 14.04it/s] 74%|#######4  | 277/374 [00:23<00:06, 14.05it/s] 75%|#######4  | 279/374 [00:23<00:06, 14.00it/s] 75%|#######5  | 281/374 [00:23<00:06, 13.98it/s] 76%|#######5  | 283/374 [00:23<00:06, 14.04it/s] 76%|#######6  | 285/374 [00:23<00:06, 14.04it/s] 77%|#######6  | 287/374 [00:23<00:06, 14.05it/s] 77%|#######7  | 289/374 [00:24<00:06, 14.08it/s] 78%|#######7  | 291/374 [00:24<00:05, 14.12it/s] 78%|#######8  | 293/374 [00:24<00:05, 14.13it/s]

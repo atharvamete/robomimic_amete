@@ -36,7 +36,7 @@
         }
     },
     "train": {
-        "data": null,
+        "data": "datasets/square/ph/low_dim_v141.hdf5",
         "output_dir": "../skill_gpt_trained_models",
         "num_data_workers": 0,
         "hdf5_cache_mode": "all",
