@@ -45,7 +45,7 @@ class MLP_Proj(nn.Module):
         h: latent embedding (B, H)
     """
 
-    def __init__(self, input_size, hidden_size, output_size, num_layers=1):
+    def __init__(self, input_size, hidden_size, output_size, num_layers=1, dropout=0.0):
         super().__init__()
         assert num_layers >= 1, "[error] num_layers < 1"
         sizes = [input_size] + [hidden_size] * (num_layers - 1) + [output_size]
@@ -53,6 +53,7 @@ class MLP_Proj(nn.Module):
         for i in range(num_layers - 1):
             layers.append(nn.Linear(sizes[i], sizes[i + 1]))
             layers.append(nn.ReLU(inplace=True))
+            layers.append(nn.Dropout(p=dropout))
         layers.append(nn.Linear(sizes[-2], sizes[-1]))
         self.projection = nn.Sequential(*layers)
 
@@ -63,6 +64,27 @@ class MLP_Proj(nn.Module):
         """
         h = self.projection(data)  # (B, H)
         return h
+
+###############################################################################
+#
+# obs encoder modules
+#
+###############################################################################
+
+class ObsEncoder(nn.Module):
+    def __init__(self, cfg):
+        super().__init__()
+        self.encoders = nn.ModuleList()
+        for i in range(len(cfg.input_dim)):
+            encoder = MLP_Proj(cfg.input_dim[i], cfg.output_dim[i], cfg.output_dim[i], num_layers=cfg.num_layers[i], dropout=cfg.dropout[i])
+            self.encoders.append(encoder)
+        self.encoders.append(MLP_Proj(sum(cfg.output_dim), cfg.proj_dim, cfg.proj_dim, num_layers=1))
+    
+    def forward(self, obs):
+        x = [encoder(obs[i]) for i, encoder in enumerate(self.encoders[:-1])]
+        x = torch.cat(x, dim=-1)
+        x = self.encoders[-1](x)
+        return x.unsqueeze(1)
 
 ###############################################################################
 #
@@ -343,6 +365,7 @@ class SkillGPT(nn.Module):
         self.head = nn.Linear(cfg.n_embd, cfg.vocab_size)
         self.drop = nn.Dropout(cfg.embd_pdrop)
         self.lnf = nn.LayerNorm(cfg.n_embd)
+        self.obs_encoder = ObsEncoder(cfg.encoder)
         if cfg.offset_layers > 0:
             self.offset_head = MLP_Proj(cfg.n_embd, cfg.offset_hidden_dim, cfg.offset_dim, num_layers=cfg.offset_layers)
 

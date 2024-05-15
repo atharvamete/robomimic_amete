@@ -10,3 +10,4 @@ from robomimic.algo.hbc import HBC
 from robomimic.algo.iris import IRIS
 from robomimic.algo.td3_bc import TD3_BC
 from robomimic.algo.skill_vae import Skill_VAE
+from robomimic.algo.skill_gpt import Skill_GPT

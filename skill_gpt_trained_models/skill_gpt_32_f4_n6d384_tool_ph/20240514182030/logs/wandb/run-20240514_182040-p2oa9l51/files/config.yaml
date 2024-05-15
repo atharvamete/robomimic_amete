@@ -8,7 +8,7 @@ _wandb:
     framework: torch
     is_jupyter_run: false
     is_kaggle_kernel: false
-    start_time: 1715287842
+    start_time: 1715725240
     t:
       1:
       - 1
@@ -33,4 +33,4 @@ hp_base_config_file:
   value: null
 algo:
   desc: null
-  value: skill_vae
+  value: skill_gpt

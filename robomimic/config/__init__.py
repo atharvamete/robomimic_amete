@@ -11,3 +11,4 @@ from robomimic.config.hbc_config import HBCConfig
 from robomimic.config.iris_config import IRISConfig
 from robomimic.config.td3_bc_config import TD3_BCConfig
 from robomimic.config.skill_vae_config import Skill_VAEConfig
+from robomimic.config.skill_gpt_config import Skill_GPTConfig
