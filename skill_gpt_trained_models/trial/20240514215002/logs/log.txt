@@ -1,283 +1,0 @@
-
-============= Initialized Observation Utils with Obs Spec =============
-
-using obs modality: low_dim with keys: ['object', 'robot0_eef_pos', 'robot0_gripper_qpos', 'robot0_eef_quat']
-using obs modality: rgb with keys: []
-using obs modality: depth with keys: []
-using obs modality: scan with keys: []
-
-============= Loaded Environment Metadata =============
-obs key object with shape (10,)
-obs key robot0_eef_pos with shape (3,)
-obs key robot0_eef_quat with shape (4,)
-obs key robot0_gripper_qpos with shape (2,)
-[robosuite WARNING] No private macro file found! (macros.py:53)
-[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
-[robosuite WARNING] To setup, run: python /home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
-Created environment with name Lift
-Action size is 7
-Lift
-{
-    "camera_depths": false,
-    "camera_heights": 84,
-    "camera_widths": 84,
-    "control_freq": 20,
-    "controller_configs": {
-        "control_delta": true,
-        "damping": 1,
-        "damping_limits": [
-            0,
-            10
-        ],
-        "impedance_mode": "fixed",
-        "input_max": 1,
-        "input_min": -1,
-        "interpolation": null,
-        "kp": 150,
-        "kp_limits": [
-            0,
-            300
-        ],
-        "orientation_limits": null,
-        "output_max": [
-            0.05,
-            0.05,
-            0.05,
-            0.5,
-            0.5,
-            0.5
-        ],
-        "output_min": [
-            -0.05,
-            -0.05,
-            -0.05,
-            -0.5,
-            -0.5,
-            -0.5
-        ],
-        "position_limits": null,
-        "ramp_ratio": 0.2,
-        "type": "OSC_POSE",
-        "uncouple_pos_ori": true
-    },
-    "has_offscreen_renderer": false,
-    "has_renderer": false,
-    "ignore_done": true,
-    "reward_shaping": false,
-    "robots": [
-        "Panda"
-    ],
-    "use_camera_obs": false,
-    "use_object_obs": true
-}
-
-/home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/torch/nn/modules/transformer.py:286: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
-  warnings.warn(f"enable_nested_tensor is True, but self.use_nested_tensor is False because {why_not_sparsity_fast_path}")
-
-============= Model Summary =============
-Skill_GPT (
-  ModuleDict(
-    (vae): SkillVAE(
-      (vq): FSQ(
-        (project_in): Linear(in_features=256, out_features=4, bias=True)
-        (project_out): Linear(in_features=4, out_features=256, bias=True)
-      )
-      (action_proj): Linear(in_features=7, out_features=256, bias=True)
-      (action_head): Linear(in_features=256, out_features=7, bias=True)
-      (conv_block): ResidualTemporalBlock(
-        (blocks): ModuleList(
-          (0): Conv1dBlock(
-            (block): Sequential(
-              (0): CausalConv1d(
-                (conv): Conv1d(256, 256, kernel_size=(5,), stride=(2,), padding=(4,))
-              )
-              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
-              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
-              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
-              (4): Mish()
-            )
-          )
-          (1): Conv1dBlock(
-            (block): Sequential(
-              (0): CausalConv1d(
-                (conv): Conv1d(256, 256, kernel_size=(3,), stride=(2,), padding=(2,))
-              )
-              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
-              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
-              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
-              (4): Mish()
-            )
-          )
-          (2): Conv1dBlock(
-            (block): Sequential(
-              (0): CausalConv1d(
-                (conv): Conv1d(256, 256, kernel_size=(3,), stride=(1,), padding=(2,))
-              )
-              (1): Rearrange('batch channels horizon -> batch channels 1 horizon')
-              (2): GroupNorm(8, 256, eps=1e-05, affine=True)
-              (3): Rearrange('batch channels 1 horizon -> batch channels horizon')
-              (4): Mish()
-            )
-          )
-        )
-      )
-      (encoder): TransformerEncoder(
-        (layers): ModuleList(
-          (0-1): 2 x TransformerEncoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (linear1): Linear(in_features=256, out_features=1024, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=1024, out_features=256, bias=True)
-            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (decoder): TransformerDecoder(
-        (layers): ModuleList(
-          (0-3): 4 x TransformerDecoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (multihead_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=256, out_features=256, bias=True)
-            )
-            (linear1): Linear(in_features=256, out_features=1024, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=1024, out_features=256, bias=True)
-            (norm1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (norm3): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-            (dropout3): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (add_positional_emb): Summer(
-        (penc): PositionalEncoding1D()
-      )
-      (fixed_positional_emb): PositionalEncoding1D()
-    )
-    (gpt): SkillGPT(
-      (tok_emb): Embedding(1001, 384)
-      (add_positional_emb): Summer(
-        (penc): PositionalEncoding1D()
-      )
-      (decoder): TransformerEncoder(
-        (layers): ModuleList(
-          (0-5): 6 x TransformerEncoderLayer(
-            (self_attn): MultiheadAttention(
-              (out_proj): NonDynamicallyQuantizableLinear(in_features=384, out_features=384, bias=True)
-            )
-            (linear1): Linear(in_features=384, out_features=1536, bias=True)
-            (dropout): Dropout(p=0.1, inplace=False)
-            (linear2): Linear(in_features=1536, out_features=384, bias=True)
-            (norm1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
-            (norm2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
-            (dropout1): Dropout(p=0.1, inplace=False)
-            (dropout2): Dropout(p=0.1, inplace=False)
-          )
-        )
-      )
-      (head): Linear(in_features=384, out_features=1000, bias=True)
-      (drop): Dropout(p=0.1, inplace=False)
-      (lnf): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
-      (obs_encoder): ObsEncoder(
-        (encoders): ModuleList(
-          (0): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=10, out_features=128, bias=True)
-              (1): ReLU(inplace=True)
-              (2): Dropout(p=0.1, inplace=False)
-              (3): Linear(in_features=128, out_features=128, bias=True)
-            )
-          )
-          (1): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=3, out_features=32, bias=True)
-            )
-          )
-          (2): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=4, out_features=32, bias=True)
-            )
-          )
-          (3): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=2, out_features=32, bias=True)
-            )
-          )
-          (4): MLP_Proj(
-            (projection): Sequential(
-              (0): Linear(in_features=224, out_features=384, bias=True)
-            )
-          )
-        )
-      )
-    )
-  )
-)
-
-SequenceDataset: loading dataset into memory...
-  0%|          | 0/300 [00:00<?, ?it/s] 27%|##6       | 80/300 [00:00<00:00, 781.87it/s] 53%|#####3    | 159/300 [00:00<00:00, 665.27it/s] 76%|#######5  | 227/300 [00:00<00:00, 647.07it/s]100%|##########| 300/300 [00:00<00:00, 694.35it/s]
-SequenceDataset: caching get_item calls...
-  0%|          | 0/31127 [00:00<?, ?it/s]  4%|4         | 1301/31127 [00:00<00:02, 13006.48it/s]  8%|8         | 2602/31127 [00:00<00:02, 12081.41it/s] 13%|#2        | 3910/31127 [00:00<00:02, 12516.03it/s] 17%|#7        | 5441/31127 [00:00<00:01, 13591.02it/s] 23%|##3       | 7194/31127 [00:00<00:01, 14987.02it/s] 28%|##7       | 8703/31127 [00:00<00:01, 15019.15it/s] 33%|###2      | 10209/31127 [00:00<00:01, 14287.53it/s] 37%|###7      | 11647/31127 [00:00<00:01, 13599.08it/s] 42%|####2     | 13082/31127 [00:00<00:01, 13817.85it/s] 46%|####6     | 14473/31127 [00:01<00:01, 13767.40it/s] 51%|#####     | 15856/31127 [00:01<00:01, 13078.29it/s] 55%|#####5    | 17174/31127 [00:01<00:01, 12371.62it/s] 60%|#####9    | 18631/31127 [00:01<00:00, 12982.53it/s] 65%|######4   | 20118/31127 [00:01<00:00, 13517.46it/s] 69%|######9   | 21483/31127 [00:01<00:00, 13098.87it/s] 73%|#######3  | 22804/31127 [00:01<00:00, 12830.88it/s] 78%|#######7  | 24275/31127 [00:01<00:00, 13362.95it/s] 83%|########3 | 25844/31127 [00:01<00:00, 14033.55it/s] 88%|########7 | 27256/31127 [00:02<00:00, 13663.27it/s] 92%|#########1| 28630/31127 [00:02<00:00, 13014.87it/s] 96%|#########6| 29994/31127 [00:02<00:00, 13189.29it/s]100%|##########| 31127/31127 [00:02<00:00, 13439.90it/s]
-
-============= Training Dataset =============
-SequenceDataset (
-	path=datasets/lift/mh/low_dim_v141.hdf5
-	obs_keys=('object', 'robot0_eef_pos', 'robot0_eef_quat', 'robot0_gripper_qpos')
-	seq_length=32
-	filter_key=none
-	frame_stack=1
-	pad_seq_length=True
-	pad_frame_stack=True
-	goal_mode=none
-	cache_mode=all
-	num_demos=300
-	num_sequences=31127
-)
-
-**************************************************
-Warnings generated by robomimic have been duplicated here (from above) for convenience. Please check them carefully.
-**************************************************
-
-  0%|          | 0/121 [00:00<?, ?it/s]  1%|          | 1/121 [00:03<06:56,  3.47s/it]  2%|2         | 3/121 [00:03<01:53,  1.04it/s]  4%|4         | 5/121 [00:03<00:58,  2.00it/s]  6%|5         | 7/121 [00:03<00:36,  3.11it/s]  7%|7         | 9/121 [00:04<00:25,  4.41it/s]  9%|9         | 11/121 [00:04<00:18,  5.84it/s] 11%|#         | 13/121 [00:04<00:14,  7.29it/s] 12%|#2        | 15/121 [00:04<00:12,  8.65it/s] 14%|#4        | 17/121 [00:04<00:10,  9.84it/s] 16%|#5        | 19/121 [00:04<00:09, 10.88it/s] 17%|#7        | 21/121 [00:04<00:08, 11.60it/s] 19%|#9        | 23/121 [00:05<00:07, 12.28it/s] 21%|##        | 25/121 [00:05<00:07, 12.77it/s] 22%|##2       | 27/121 [00:05<00:07, 13.06it/s] 24%|##3       | 29/121 [00:05<00:06, 13.28it/s] 26%|##5       | 31/121 [00:05<00:06, 13.62it/s] 27%|##7       | 33/121 [00:05<00:06, 13.70it/s] 29%|##8       | 35/121 [00:05<00:06, 13.61it/s] 31%|###       | 37/121 [00:06<00:06, 13.59it/s] 32%|###2      | 39/121 [00:06<00:05, 13.73it/s] 34%|###3      | 41/121 [00:06<00:05, 13.88it/s] 36%|###5      | 43/121 [00:06<00:05, 14.01it/s] 37%|###7      | 45/121 [00:06<00:05, 13.83it/s] 39%|###8      | 47/121 [00:06<00:05, 13.98it/s] 40%|####      | 49/121 [00:06<00:05, 14.08it/s] 42%|####2     | 51/121 [00:07<00:04, 14.07it/s] 44%|####3     | 53/121 [00:07<00:04, 14.01it/s] 45%|####5     | 55/121 [00:07<00:04, 14.02it/s] 47%|####7     | 57/121 [00:07<00:04, 14.11it/s] 49%|####8     | 59/121 [00:07<00:04, 14.10it/s] 50%|#####     | 61/121 [00:07<00:04, 14.30it/s] 52%|#####2    | 63/121 [00:07<00:04, 14.32it/s] 54%|#####3    | 65/121 [00:08<00:03, 14.01it/s] 55%|#####5    | 67/121 [00:08<00:03, 13.96it/s] 57%|#####7    | 69/121 [00:08<00:03, 14.14it/s] 59%|#####8    | 71/121 [00:08<00:03, 14.13it/s] 60%|######    | 73/121 [00:08<00:03, 13.89it/s] 62%|######1   | 75/121 [00:08<00:03, 14.01it/s] 64%|######3   | 77/121 [00:08<00:03, 14.05it/s] 65%|######5   | 79/121 [00:09<00:02, 14.12it/s] 67%|######6   | 81/121 [00:09<00:02, 13.94it/s] 69%|######8   | 83/121 [00:09<00:02, 13.89it/s] 70%|#######   | 85/121 [00:09<00:02, 13.70it/s] 72%|#######1  | 87/121 [00:09<00:02, 13.88it/s] 74%|#######3  | 89/121 [00:09<00:02, 14.00it/s] 75%|#######5  | 91/121 [00:09<00:02, 13.94it/s] 77%|#######6  | 93/121 [00:10<00:02, 13.82it/s] 79%|#######8  | 95/121 [00:10<00:01, 14.09it/s] 80%|########  | 97/121 [00:10<00:01, 14.15it/s] 82%|########1 | 99/121 [00:10<00:01, 14.18it/s] 83%|########3 | 101/121 [00:10<00:01, 14.27it/s] 85%|########5 | 103/121 [00:10<00:01, 14.44it/s] 87%|########6 | 105/121 [00:10<00:01, 14.13it/s] 88%|########8 | 107/121 [00:11<00:00, 14.15it/s] 90%|######### | 109/121 [00:11<00:00, 14.02it/s] 92%|#########1| 111/121 [00:11<00:00, 14.06it/s] 93%|#########3| 113/121 [00:11<00:00, 13.76it/s] 95%|#########5| 115/121 [00:11<00:00, 13.87it/s] 97%|#########6| 117/121 [00:11<00:00, 13.81it/s] 98%|#########8| 119/121 [00:11<00:00, 13.83it/s]100%|##########| 121/121 [00:12<00:00, 13.68it/s]100%|##########| 121/121 [00:12<00:00, 10.04it/s]
-Train Epoch 1
-{
-    "Time_Data_Loading": 0.01595535675684611,
-    "Time_Epoch": 0.20093551476796467,
-    "Time_Log_Info": 1.279910405476888e-05,
-    "Time_Process_Batch": 0.0009502132733662923,
-    "Time_Train_Batch": 0.1836143096288045,
-    "grad_norms": 0.46347016240249417,
-    "offset_loss": 0.22130036070819728,
-    "prior_loss": 5.9922048710594495
-}
-
-Epoch 1 Memory Usage: 5205 MB
-
-  0%|          | 0/121 [00:00<?, ?it/s]  2%|1         | 2/121 [00:00<00:08, 14.11it/s]  3%|3         | 4/121 [00:00<00:08, 14.24it/s]  5%|4         | 6/121 [00:00<00:08, 14.07it/s]  7%|6         | 8/121 [00:00<00:08, 13.67it/s]  8%|8         | 10/121 [00:00<00:08, 13.73it/s] 10%|9         | 12/121 [00:00<00:07, 13.64it/s] 12%|#1        | 14/121 [00:01<00:07, 13.47it/s] 13%|#3        | 16/121 [00:01<00:07, 13.60it/s] 15%|#4        | 18/121 [00:01<00:07, 13.80it/s] 17%|#6        | 20/121 [00:01<00:07, 13.80it/s] 18%|#8        | 22/121 [00:01<00:07, 13.73it/s] 20%|#9        | 24/121 [00:01<00:06, 13.90it/s] 21%|##1       | 26/121 [00:01<00:06, 14.02it/s] 23%|##3       | 28/121 [00:02<00:06, 13.96it/s] 25%|##4       | 30/121 [00:02<00:06, 13.90it/s] 26%|##6       | 32/121 [00:02<00:06, 13.94it/s] 28%|##8       | 34/121 [00:02<00:06, 13.83it/s] 30%|##9       | 36/121 [00:02<00:06, 13.70it/s] 31%|###1      | 38/121 [00:02<00:06, 13.80it/s] 33%|###3      | 40/121 [00:02<00:05, 13.87it/s] 35%|###4      | 42/121 [00:03<00:05, 14.00it/s] 36%|###6      | 44/121 [00:03<00:05, 13.96it/s] 38%|###8      | 46/121 [00:03<00:05, 13.74it/s] 40%|###9      | 48/121 [00:03<00:05, 13.82it/s] 40%|####      | 49/121 [00:03<00:05, 13.61it/s]
-Traceback (most recent call last):
-  File "robomimic/scripts/train.py", line 427, in <module>
-    main(args)
-  File "robomimic/scripts/train.py", line 378, in main
-    train(config, device=device)
-  File "robomimic/scripts/train.py", line 196, in train
-    step_log = TrainUtils.run_epoch(
-  File "/satassdscratch/amete7/robomimic_amete/robomimic/utils/train_utils.py", line 559, in run_epoch
-    info = model.train_on_batch(input_batch, epoch, validate=validate)
-  File "/satassdscratch/amete7/robomimic_amete/robomimic/algo/skill_gpt.py", line 189, in train_on_batch
-    grad_norms = TorchUtils.backprop_for_loss(
-  File "/satassdscratch/amete7/robomimic_amete/robomimic/utils/torch_utils.py", line 188, in backprop_for_loss
-    loss.backward(retain_graph=retain_graph)
-  File "/home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/torch/_tensor.py", line 522, in backward
-    torch.autograd.backward(
-  File "/home/amete7/miniconda3/envs/robomimic/lib/python3.8/site-packages/torch/autograd/__init__.py", line 266, in backward
-    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-KeyboardInterrupt
