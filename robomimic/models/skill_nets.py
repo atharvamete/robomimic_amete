@@ -79,10 +79,12 @@ class ObsEncoder(nn.Module):
             encoder = MLP_Proj(cfg.input_dim[i], cfg.output_dim[i], cfg.output_dim[i], num_layers=cfg.num_layers[i], dropout=cfg.dropout[i])
             self.encoders.append(encoder)
         self.encoders.append(MLP_Proj(sum(cfg.output_dim), cfg.proj_dim, cfg.proj_dim, num_layers=1))
+        self.dropout = nn.Dropout(cfg.dropout[0])
     
     def forward(self, obs):
         x = [encoder(obs[i]) for i, encoder in enumerate(self.encoders[:-1])]
         x = torch.cat(x, dim=-1)
+        x = self.dropout(x)
         x = self.encoders[-1](x)
         return x.unsqueeze(1)
 
@@ -273,8 +275,8 @@ class SkillVAE(nn.Module):
         self.action_head = nn.Linear(cfg.decoder_dim, cfg.action_dim)
         self.conv_block = ResidualTemporalBlock(
             cfg.encoder_dim, cfg.encoder_dim, kernel_size=cfg.kernel_sizes, stride=cfg.strides, causal=cfg.use_causal_encoder)
-        # self.deconv_block = ResidualTemporalDeConvBlock(
-        #     cfg.decoder_dim, cfg.decoder_dim, kernel_size=cfg.kernel_sizes, stride=cfg.strides, causal=cfg.use_causal_decoder)
+        self.deconv_block = ResidualTemporalDeConvBlock(
+            cfg.decoder_dim, cfg.decoder_dim, kernel_size=cfg.kernel_sizes, stride=cfg.strides, causal=cfg.use_causal_decoder)
 
         encoder_layer = nn.TransformerEncoderLayer(d_model=cfg.encoder_dim, nhead=cfg.encoder_heads, dim_feedforward=4*cfg.encoder_dim, dropout=cfg.attn_pdrop, activation='gelu', batch_first=True, norm_first=True)
         self.encoder =  nn.TransformerEncoder(encoder_layer, num_layers=cfg.encoder_layers)

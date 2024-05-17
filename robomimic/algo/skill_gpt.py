@@ -86,16 +86,16 @@ class Skill_GPT(PolicyAlgo):
         self.nets["vae"] = SkillNets.SkillVAE(self.algo_config.skill_vae)
         self.nets["gpt"] = SkillNets.SkillGPT(self.algo_config.skill_gpt)
         if self.algo_config.skill_vae.path is not None:
-            checkpoint = torch.load(self.algo_config.skill_vae.path)['model']
+            checkpoint = torch.load(self.algo_config.skill_vae.path)['state_dict']
             # remove prefix "vae." from keys
-            checkpoint = {k[4:]: v for k, v in checkpoint.items()}
+            checkpoint = {k[10:]: v for k, v in checkpoint.items()}
             self.nets["vae"].load_state_dict(checkpoint, strict=True)
-        # if not self.algo_config.tune_decoder:
-        #     self.nets["vae"].eval()
-        #     for param in self.nets["vae"].parameters():
-        #         param.requires_grad = False
-        # else:
-        #     self.nets["vae"].train()
+        if not self.algo_config.tune_decoder:
+            self.nets["vae"].eval()
+            for param in self.nets["vae"].parameters():
+                param.requires_grad = False
+        else:
+            self.nets["vae"].train()
 
         self.nets = self.nets.float().to(self.device)
 
@@ -173,20 +173,27 @@ class Skill_GPT(PolicyAlgo):
                 probs = torch.softmax(logits, dim=-1)
                 sampled_indices = torch.multinomial(probs.view(-1,logits.shape[-1]),1)
                 sampled_indices = sampled_indices.view(-1,logits.shape[1])
-                pred_actions = self.nets["vae"].decode_actions(sampled_indices)
+            pred_actions = self.nets["vae"].decode_actions(sampled_indices)
             if self.return_offset:
                 offset = offset.view(-1, self.algo_config.skill_vae.skill_block_size, self.algo_config.skill_vae.action_dim)
                 pred_actions = pred_actions + offset
             offset_loss = self.loss(pred_actions, batch["actions"])
-            loss = prior_loss + self.algo_config.offset_loss_scale*offset_loss
+            #loss = prior_loss + self.algo_config.offset_loss_scale*offset_loss
 
             if not validate:
-                grad_norms = TorchUtils.backprop_for_loss(
+                grad_norms_gpt = TorchUtils.backprop_for_loss(
                     net=self.nets["gpt"],
                     optim=self.optimizers["gpt"],
-                    loss=loss,
+                    loss=prior_loss,
                 )
-                info["grad_norms"] = grad_norms
+                info["grad_norms_gpt"] = grad_norms_gpt
+                if self.algo_config.tune_decoder:
+                    grad_norms_vae = TorchUtils.backprop_for_loss(
+                        net=self.nets["vae"],
+                        optim=self.optimizers["vae"],
+                        loss=offset_loss,
+                    )
+                    info["grad_norms_vae"] = grad_norms_vae
             info["prior_loss"] = prior_loss.detach().cpu().item()
             info["offset_loss"] = offset_loss.detach().cpu().item()
         return info
@@ -205,7 +212,8 @@ class Skill_GPT(PolicyAlgo):
         loss_log = OrderedDict()
         loss_log["prior_loss"] = info["prior_loss"]
         loss_log["offset_loss"] = info["offset_loss"]
-        loss_log["grad_norms"] = info["grad_norms"]
+        loss_log["grad_norms_gpt"] = info["grad_norms_gpt"]
+        loss_log["grad_norms_vae"] = info["grad_norms_vae"]
         return loss_log
 
     def get_action(self, obs_dict, goal_dict=None):

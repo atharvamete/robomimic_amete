@@ -1,7 +1,7 @@
 {
     "algo_name": "skill_gpt",
     "experiment": {
-        "name": "skill_gpt_32_f4_n6d384_square_ph",
+        "name": "skill_gpt_lib_32_f4_tune_n6d120_tool_ph",
         "validate": false,
         "logging": {
             "terminal_output_to_txt": true,
@@ -12,7 +12,7 @@
         "save": {
             "enabled": true,
             "every_n_seconds": null,
-            "every_n_epochs": 5,
+            "every_n_epochs": 50,
             "epochs": [],
             "on_best_validation": false,
             "on_best_rollout_return": false,
@@ -30,8 +30,8 @@
             "enabled": true,
             "n": 50,
             "horizon": 400,
-            "rate": 5,
-            "warmstart": 10,
+            "rate": 25,
+            "warmstart": 20,
             "terminate_on_success": true
         }
     },
@@ -55,7 +55,7 @@
         "goal_mode": null,
         "cuda": true,
         "batch_size": 256,
-        "num_epochs": 100,
+        "num_epochs": 200,
         "seed": 1
     },
     "algo": {
@@ -67,11 +67,23 @@
                     0.9,
                     0.999
                 ],
-                "num_epochs": 100,
+                "num_epochs": 200,
+                "min_lr": 1e-05,
+                "last_epoch": -1
+            },
+            "vae": {
+                "learning_rate": 0.0001,
+                "weight_decay": 0.0001,
+                "betas": [
+                    0.9,
+                    0.999
+                ],
+                "num_epochs": 200,
                 "min_lr": 1e-05,
                 "last_epoch": -1
             }
         },
+        "tune_decoder": true,
         "offset_loss_scale": 0.0,
         "mpc_horizon": 16,
         "skill_gpt": {
@@ -80,7 +92,7 @@
             "block_size": 8,
             "n_layer": 6,
             "n_head": 6,
-            "n_embd": 384,
+            "n_embd": 120,
             "attn_pdrop": 0.1,
             "embd_pdrop": 0.1,
             "beam_size": 5,
@@ -89,7 +101,7 @@
             "offset_hidden_dim": 512,
             "encoder": {
                 "input_dim": [
-                    14,
+                    44,
                     3,
                     4,
                     2
@@ -101,7 +113,7 @@
                     32
                 ],
                 "num_layers": [
-                    2,
+                    1,
                     1,
                     1,
                     1
@@ -112,11 +124,11 @@
                     0,
                     0
                 ],
-                "proj_dim": 384
+                "proj_dim": 120
             }
         },
         "skill_vae": {
-            "path": "/satassdscratch/amete7/robomimic_amete/skill_vae_trained_models/skill_vae_32_f4_k3s4_square_ph/20240514212301/models/model_epoch_100.pth",
+            "path": "/satassdscratch/amete7/robomimic_amete/skill_vae_trained_models/libero_90_vae/multitask_model_ep100.pth",
             "action_dim": 7,
             "encoder_dim": 256,
             "decoder_dim": 256,

@@ -54,7 +54,14 @@ class Skill_GPTConfig(BaseConfig):
         self.algo.optim_params.gpt.num_epochs = 50
         self.algo.optim_params.gpt.min_lr = 1e-5                # 
         self.algo.optim_params.gpt.last_epoch = -1              # 
+        self.algo.optim_params.vae.learning_rate = 0.0001       # vae learning rate
+        self.algo.optim_params.vae.weight_decay = 0.0001        # factor to decay LR by (if epoch schedule non-empty)
+        self.algo.optim_params.vae.betas = [0.9, 0.999]         # 
+        self.algo.optim_params.vae.num_epochs = 50
+        self.algo.optim_params.vae.min_lr = 1e-5                # 
+        self.algo.optim_params.vae.last_epoch = -1              # 
 
+        self.algo.tune_decoder = False
         self.algo.offset_loss_scale = 0.0
         self.algo.mpc_horizon = 16
 
