@@ -10,9 +10,12 @@ tests/assets/test_v141.hdf5
 
 tests/tmp_model_dir/
 skill_vae_trained_models/*
+skill_gpt_trained_models/*
 # pycharm configs
 .idea/
 
+*.txt
+*.wandb
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
