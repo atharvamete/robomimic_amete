@@ -1,7 +1,7 @@
 {
     "algo_name": "skill_gpt",
     "experiment": {
-        "name": "skill_gpt_lib_32_f4_tune_n6d120_tool_ph",
+        "name": "skill_gpt_lib_32_f4_n6d120_tune_square_mh",
         "validate": false,
         "logging": {
             "terminal_output_to_txt": true,
@@ -28,10 +28,10 @@
         "video_skip": 5,
         "rollout": {
             "enabled": true,
-            "n": 50,
+            "n": 20,
             "horizon": 400,
             "rate": 25,
-            "warmstart": 20,
+            "warmstart": 49,
             "terminate_on_success": true
         }
     },
@@ -84,8 +84,8 @@
             }
         },
         "tune_decoder": true,
-        "offset_loss_scale": 0.0,
-        "mpc_horizon": 16,
+        "offset_loss_scale": 100.0,
+        "mpc_horizon": 8,
         "skill_gpt": {
             "start_token": 1000,
             "vocab_size": 1000,
@@ -101,7 +101,7 @@
             "offset_hidden_dim": 512,
             "encoder": {
                 "input_dim": [
-                    44,
+                    14,
                     3,
                     4,
                     2
